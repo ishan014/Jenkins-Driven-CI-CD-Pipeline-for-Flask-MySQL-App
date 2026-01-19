@@ -2,19 +2,19 @@
 
 ┌──────────────────────────────┐
 │        User Browser          │
-│        (Port: 5000)          │
+│        Port: 5000            │
 └───────────────┬──────────────┘
-                │  HTTP Request
+                │ HTTP Request
                 ▼
 ┌──────────────────────────────┐
 │     Flask App Container      │
 │  Service: flask              │
 │  Image: flask-app            │
 │                              │
-│  - Flask Web App             │
+│  - Flask Web Application     │
 │  - Reads DB env variables    │
 └───────────────┬──────────────┘
-                │  SQL over Docker Network
+                │ SQL over Docker Network
                 ▼
 ┌──────────────────────────────┐
 │     MySQL DB Container       │
