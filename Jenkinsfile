@@ -4,7 +4,7 @@ pipeline {
         stage('Clone Code') {
             steps {
                 // Replace with your GitHub repository URL
-                git branch: 'main', url: 'https://github.com/Vijeesh13/Automated-CI-CD-Pipeline-for-a-2-Tier-Flask-App.git'
+                git branch: 'main', url: 'https://github.com/ishan014/Jenkins-Driven-CI-CD-Pipeline-for-Flask-MySQL-App.git'
             }
         }
         stage('Build Docker Image') {
