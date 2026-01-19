@@ -1,105 +1,96 @@
 ## Architecture
 
-                           ┌─────────────────────────┐
-                           │       User Browser      │
-                           │ (HTTP requests on 5000) │
-                           └─────────────┬───────────┘
-                                         │
-                                         ▼
-                           ┌─────────────────────────┐
-                           │   Flask App Container   │
-                           │  (Service: flask)       │
-                           │  Image: flask-app       │
-                           ├─────────────────────────┤
-                           │  Flask + Gunicorn/dev   │
-                           │  Reads env variables:   │
-                           │   - MYSQL_HOST          │
-                           │   - MYSQL_USER          │
-                           │   - MYSQL_PASSWORD      │
-                           │   - MYSQL_DB            │
-                           └─────────────┬───────────┘
-                                         │
-                              SQL over Docker network
-                                         │
-                                         ▼
-                           ┌─────────────────────────┐
-                           │   MySQL DB Container    │
-                           │ (Service: mysql)        │
-                           ├─────────────────────────┤
-                           │  Database: devops       │
-                           │  Table: messages        │
-                           │  Data persisted via     │
-                           │  mysql-data volume      │
-                           └─────────────┬───────────┘
-                                         │
-                                         ▼
-                           ┌─────────────────────────┐
-                           │     Docker Host / EC2   │
-                           │  - Docker Engine        │
-                           │  - docker-compose       │
-                           │  - Jenkins Agent        │
-                           └─────────────────────────┘
+   User Browser (Port 5000)
+        |
+        v
+Flask App Container
+(Service: flask | Image: flask-app)
+        |
+        v
+MySQL Database Container
+(Service: mysql | DB: devops)
+        |
+        v
+Docker Host / EC2
+(Docker Engine, Docker Compose, Jenkins)
 
+
+🔹 Architecture Highlights
+
+Client Layer: User accesses the app via browser on port 5000
+
+Application Layer: Flask app running inside a Docker container
+
+Database Layer: MySQL container with persistent storage
+
+Networking: Private Docker network for secure container communication
+
+Automation: Jenkins handles build & deployment
 
 ⭐ Project Overview
 
-Application tier: Python Flask web app that lets users submit and view messages.
+Application Tier:
 
-Database tier: MySQL database that stores messages in a persistent volume.
+Python Flask web app to submit and view messages
 
-Orchestration: Docker Compose manages both containers and their shared network.
+Database Tier:
 
-CI/CD: Jenkins pipeline automates cloning the repo, building the Docker image, and deploying the stack via Docker Compose.
+MySQL database to store messages persistently
 
-This project is ideal as a DevOps portfolio piece to demonstrate your understanding of containerization and deployment automation.
+Orchestration:
 
-🎯 Objectives
+Docker Compose manages multi-container setup
 
-Build a simple two-tier web application (Flask + MySQL).
+CI/CD:
 
-Containerize both tiers using Docker.
+Jenkins pipeline automates build and deployment
 
-Use Docker Compose to manage multi-container deployment.
+✅ Ideal DevOps portfolio project to showcase containerization, orchestration, and CI/CD skills.
 
-Implement a Jenkins pipeline that:
+🎯 Project Objectives
 
-Clones the repository from GitHub
+Build a simple two-tier web application
 
-Builds the Flask app Docker image
+Containerize Flask and MySQL using Docker
 
-Runs docker compose to deploy the full stack
+Manage services using Docker Compose
 
-🧩 Features
+Implement Jenkins CI/CD pipeline to:
 
-Application (Flask):
+Clone GitHub repo
 
-Renders a web page where users can submit messages.
+Build Docker image
 
-Stores messages in a MySQL database.
+Deploy containers automatically
 
-Reads database configuration from environment variables for flexibility.
+🧩 Key Features
+🔹 Flask Application
 
-Initializes the messages table automatically if it doesn’t exist.
+Web interface to submit messages
 
-Database (MySQL):
+Fetches and displays stored messages
 
-Runs as a dedicated container.
+Uses environment variables for DB config
 
-Initializes a devops database (configurable).
+Auto-creates messages table if not present
 
-Uses a named Docker volume to persist data across container restarts.
+🔹 MySQL Database
 
-Includes a health check to ensure the database is ready before the app starts.
+Runs as a separate container
 
-CI/CD Pipeline (Jenkins):
+Uses devops database (configurable)
 
-Declarative Jenkinsfile stored in the repo.
+Data persists via named Docker volume
 
-Clones code from GitHub on each run.
+Health check ensures DB readiness
 
-Builds a fresh Docker image for the Flask app.
+🔹 CI/CD Pipeline (Jenkins)
 
-Runs docker compose down and docker compose up -d --build to redeploy.
+Declarative Jenkinsfile
+
+Fresh Docker image build on every run
+
+Zero-downtime redeployment using Docker Compose
 
 🛠 Tech Stack
 
@@ -107,115 +98,130 @@ Backend: Python, Flask
 
 Database: MySQL
 
-Containerization: Docker, Docker Compose
+Containers: Docker, Docker Compose
 
-CI/CD: Jenkins pipeline
+CI/CD: Jenkins
 
 Version Control: GitHub
 
 📂 Project Structure
 
-You can describe the structure like this (no need to list every file):
+app.py – Flask routes, DB connection, DB initialization
 
-app.py – Main Flask application (routes, DB connection, DB initialization).
+templates/ – HTML files for UI
 
-templates/ – HTML templates for the frontend (e.g. index.html).
+docker-compose.yml – Flask + MySQL services, volumes, healthchecks
 
-docker-compose.yml – Multi-container definition (Flask + MySQL, networks, volumes, healthchecks).
+Dockerfile – Flask app image definition
 
-dockerfile – Docker image definition for the Flask app.
+Jenkinsfile – CI/CD pipeline stages
 
-Jenkinsfile – Jenkins pipeline stages for build and deployment.
+requirements.txt – Python dependencies
 
-requirements.txt – Python dependencies for the Flask app.
+2-tier Output.png – App output screenshot (optional)
 
-2-tier Output.png – Screenshot/output of the running application (optional for README).
+🏗 Application Architecture
 
-🏗 Architecture
-Application Architecture
+Flask app exposes port 5000
 
-The Flask container exposes port 5000 and connects to the MySQL container over a private Docker network.
+Flask communicates with MySQL over Docker network
 
-MySQL data is stored in a named volume (mysql-data) to ensure persistence.
+MySQL data stored in mysql-data volume
 
-Environment variables (MYSQL_HOST, MYSQL_USER, MYSQL_PASSWORD, MYSQL_DB) are used to configure the database connection inside the Flask container.
+Environment variables used:
 
-You can embed the ASCII diagram from earlier here under this section.
+MYSQL_HOST
 
-⚙️ How It Works (End-to-End Flow)
+MYSQL_USER
 
-Developer writes or updates code in the Flask app and pushes changes to the GitHub repository.
+MYSQL_PASSWORD
 
-Jenkins is configured with a pipeline that uses the Jenkinsfile stored in this repo.
+MYSQL_DB
 
-When the pipeline runs, Jenkins:
 
-Clones the latest version of the repository.
 
-Builds the Docker image for the Flask application (flask-app:latest).
+⚙️ End-to-End Workflow
 
-Runs docker compose down to stop any existing containers.
+Developer pushes code to GitHub
 
-Runs docker compose up -d --build to start the updated Flask and MySQL containers.
+Jenkins pipeline triggers
+
+Jenkins:
+
+Clones repository
+
+Builds Flask Docker image
+
+Stops existing containers
+
+Deploys updated stack
 
 Docker Compose:
 
-Starts the MySQL container and waits until its health check passes.
+Starts MySQL and waits for health check
 
-Starts the Flask container, injecting the database settings via environment variables.
+Starts Flask app with DB environment variables
 
-Users can then access the Flask application via the server’s IP on port 5000, submit messages, and see them stored in MySQL.
+User accesses app on http://<server-ip>:5000
 
-🔑 Environment & Configuration
+🔑 Environment Configuration
 
-Database connection settings are provided via environment variables in docker-compose.yml, including:
+Configured in docker-compose.yml:
 
-MYSQL_HOST – MySQL service name (usually mysql in the Docker network).
+MYSQL_HOST → MySQL service name
 
-MYSQL_USER – Database user (e.g. root).
+MYSQL_USER → DB user
 
-MYSQL_PASSWORD – Password for the user.
+MYSQL_PASSWORD → DB password
 
-MYSQL_DB – Target database name (e.g. devops).
+MYSQL_DB → Database name
 
-The Flask app reads these values using os.environ.get(...) and configures flask_mysqldb accordingly.
+Flask reads values using:
 
-🚀 Running the Stack (High-Level Steps)
+os.environ.get()
 
-You don’t have to paste exact commands if you don’t want; this high-level description is enough for a portfolio README:
+🚀 Running the Application (High-Level)
+Without Jenkins
 
-Set up Docker and Docker Compose on the host machine or EC2 instance.
+Install Docker & Docker Compose
 
-Clone this repository onto the host.
+Clone the repository
 
-Build the Flask image and start the stack using Docker Compose.
+Build and run using Docker Compose
 
-Open a browser and navigate to http://<server-ip>:5000 to access the app.
+Open browser → http://localhost:5000
 
-If using Jenkins:
+With Jenkins
 
-Install Jenkins on the same host (or with access to Docker).
+Install Jenkins on Docker-enabled host
 
-Configure a Pipeline job that uses this repository and the provided Jenkinsfile.
+Create a Pipeline job using this repo
 
-Run the job (or configure webhooks/poll SCM) to trigger automated deployments on every code change.
+Use provided Jenkinsfile
 
-🔁 CI/CD Pipeline (Jenkinsfile Summary)
+Trigger builds manually or via GitHub webhook
 
-The Jenkinsfile defines a simple 3-stage pipeline:
+🔁 Jenkins CI/CD Pipeline Summary
+Pipeline Stages
 
-Clone Code
+1️⃣ Clone Code
 
-Pulls the latest code from the main branch of this GitHub repository.
+Pulls latest code from GitHub
 
-Build Docker Image
+2️⃣ Build Docker Image
 
-Builds the Docker image for the Flask application (flask-app:latest) using the project dockerfile.
+Builds flask-app:latest
 
-Deploy with Docker Compose
+3️⃣ Deploy with Docker Compose
 
-Runs docker compose down to stop existing containers (if any).
+Stops old containers
 
-Runs docker compose up -d --build to bring up the latest version of the Flask and MySQL containers.
+Starts updated Flask + MySQL stack
 
-This approach makes the Jenkins agent itself the deployment server, simplifying the setup.
+📌 Jenkins agent itself acts as the deployment server → simple & effective DevOps setup
+
+
+
+Interview-friendly & easy to explain live
+
+Perfect for DevOps Fresher roles
